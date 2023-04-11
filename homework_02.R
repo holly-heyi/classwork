@@ -96,3 +96,5 @@ model2<-train(total_fish~.,data=training,
  model2
  
 # After comparing the two models,founding that the rf model is more suitable because the RMSE is smaller
+         
+         
