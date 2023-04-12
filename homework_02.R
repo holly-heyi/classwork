@@ -33,7 +33,7 @@ env_fish %>% gather(-fish_abundance,key="value", value = "env") %>%
   theme_bw()
 
 # delete sites which have no fishes.
-env_fish <- dplyr::select(env_fish, 1:11,39) %>% subset(rowsum !=0)
+env_fish <- subset(env_fish, rowsum !=0)
 
 #  removing all rows which contains an outlier.
 for(i in 1:12){
