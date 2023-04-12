@@ -4,6 +4,7 @@
 # - reading env and fish data, and summarizing fish abundance data by sites, and combining env and total fish to a new data frame named as "env_fish". 
 
 rm(list = ls())
+library(ade4)
 library(tidyverse)
 library(carData)
 library(car)
@@ -24,11 +25,12 @@ env_fish<-env_tib %>%
 View(env_fish)
 
 #visualizing the features of the new env_fish set using scatterplot(). 
-featurePlot(x=env_fish[, -12],
-            y=env_fish[, 12],
-            plot = "scatter",
-            type=c("p","smooth"),
-            layout=c(3,4))
+env_fish %>% gather(-fish_abundance,key="value", value = "env") %>%
+  ggplot(aes(x= env, y=fish_abundance)) + 
+  geom_point() +
+  geom_smooth(se =FALSE) +
+  facet_wrap(~value, scale ="free") +
+  theme_bw()
 
 # delete sites which have no fishes.
 env_fish <- dplyr::select(env_fish, 1:11,39) %>% subset(rowsum !=0)
