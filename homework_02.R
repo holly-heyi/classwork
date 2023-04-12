@@ -31,9 +31,9 @@ featurePlot(x=env_fish[, -12],
             layout=c(3,4))
 
 # delete sites which have no fishes.
-env_fish<-subset(env_fish,fish_abundance!=0)
+env_fish <- dplyr::select(env_fish, 1:11,39) %>% subset(rowsum !=0)
 
-#  removing all rows where any column contains an outlier.
+#  removing all rows which contains an outlier.
 for(i in 1:12){
   r<-which(env_fish[ ,i] %in% boxplot.stats(env_fish[ ,i])$out)
   print(r)
@@ -45,7 +45,7 @@ env_fish<-env_fish[-c(1,2,3,6,14,22:25,28,29), ]
 nearZeroVar(env_fish,name=T,saveMetrics= TRUE)
 
 # detecting the collinearity among env variables or removing highly correlated features(with an absolute correlation of 0.75 or higher) 
-env_fishCor <-  cor(env_fish[ ,-12])
+env_fishCor <- cor(env_fish[ ,-12])
 highlyCor<- findCorrelation(env_fishCor, cutoff = .75)
 env_fish1 <- env_fish[,-highlyCor] 
 comboInfo <- findLinearCombos(env_fish1)
@@ -56,14 +56,17 @@ dim(env_fish1)
 # Section II: Building a regression model. This section covers
 # splitting data into training and test sets
 set.seed(666)
-train_index<-createDataPartition(env_fish1$fish_abundance,p=0.8,list = F)
+train_index<-createDataPartition(env_fish1$fish_abundance,p=0.8,list = FALSE)
 training<-env_fish1[train_index,]
 test<-env_fish1[-train_index,]
 
 # visualizing the features and targets of the training set
 x<-as.matrix(env_fish1[ ,1:6])
-y<-as.factor(env_fish1$total_fish)
-featurePlot(x,y,plot="density")
+y<-as.factor(env_fish1$fish_abundance)
+featurePlot(x,y,plot="density",
+            strip=strip.custom(par.strip.text=list(cex=.7)),
+            scales=list(x=list(relation="free"),
+                        y=list(relation="free")))
 
 # Creating a baseline model between the environmental variables and the total fish abundance with the tree-based algorithm
 set.seed(777)
