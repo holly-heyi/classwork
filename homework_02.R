@@ -33,7 +33,7 @@ env_fish %>% gather(-fish_abundance,key="value", value = "env") %>%
   theme_bw()
 
 # delete sites which have no fishes.
-env_fish <- subset(env_fish, rowsum !=0)
+env_fish_1 <- subset(env_fish, rowsum !=0)
 
 #  removing all rows which contains an outlier of fish_abundance.
 boxplot(env_fish_1$fish_abundance,main="fish_abundance",
@@ -44,24 +44,24 @@ boxplot(env_fish_1$fish_abundance,main="fish_abundance",
 nearZeroVar(env_fish,name=T,saveMetrics= TRUE)
 
 # detecting the collinearity among env variables or removing highly correlated features(with an absolute correlation of 0.75 or higher) 
-env_fishCor <- cor(env_fish[ ,-12])
+env_fishCor <- cor(env_fish_1[ ,-12])
 highlyCor<- findCorrelation(env_fishCor, cutoff = .75)
-env_fish1 <- env_fish[,-highlyCor] 
-comboInfo <- findLinearCombos(env_fish1)
+env_fish_2 <- env_fish_1[,-highlyCor] 
+comboInfo <- findLinearCombos(env_fish_2)
 comboInfo
-env_fish1[, -comboInfo$remove]
-dim(env_fish1)
+env_fish_2[, -comboInfo$remove]
+dim(env_fish_2)
 
 # Section II: Building a regression model. This section covers
 # splitting data into training and test sets
 set.seed(666)
-train_index<-createDataPartition(env_fish1$fish_abundance,p=0.8,list = FALSE)
-training<-env_fish1[train_index,]
-test<-env_fish1[-train_index,]
+train_index<-createDataPartition(env_fish_2$fish_abundance,p=0.8,list = FALSE)
+training<-env_fish_2[train_index,]
+test<-env_fish_2[-train_index,]
 
 # visualizing the features and targets of the training set
-x<-as.matrix(env_fish1[ ,1:6])
-y<-as.factor(env_fish1$fish_abundance)
+x<-as.matrix(env_fish_2[ ,1:6])
+y<-as.factor(env_fish_2$fish_abundance)
 featurePlot(x,y,plot="density",
             strip=strip.custom(par.strip.text=list(cex=.7)),
             scales=list(x=list(relation="free"),
@@ -90,7 +90,7 @@ fitControl<-trainControl(
            repeats = 30)
 
 set.seed(888)
-model2<-train(total_fish~.,data=training,
+model2<-train(fish_abundance~.,data=training,
               method="rf",
               trControl=fitControl,
               metric="RMSE",
