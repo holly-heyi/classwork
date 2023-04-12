@@ -35,13 +35,10 @@ env_fish %>% gather(-fish_abundance,key="value", value = "env") %>%
 # delete sites which have no fishes.
 env_fish <- subset(env_fish, rowsum !=0)
 
-#  removing all rows which contains an outlier.
-for(i in 1:12){
-  r<-which(env_fish[ ,i] %in% boxplot.stats(env_fish[ ,i])$out)
-  print(r)
-}
-
-env_fish<-env_fish[-c(1,2,3,6,14,22:25,28,29), ]
+#  removing all rows which contains an outlier of fish_abundance.
+boxplot(env_fish_1$fish_abundance,main="fish_abundance",
+        sub=paste("outlier rows:",boxplot.stats(env_fish_1$fish_abundance) $ out))
+# we can find there isn't any outlier of fish_abundance.
 
 # identifying near zero-variance, outlies of the env variables. and excluding them for analysis.
 nearZeroVar(env_fish,name=T,saveMetrics= TRUE)
