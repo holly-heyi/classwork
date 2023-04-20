@@ -35,31 +35,24 @@ hist(spe.relf, right=FALSE,las=1,
 # As we can see, the fish was founded in 25 sites, 
 # regarded as the most widespread species.
 
-# In terms of the fish community composition, which groups of species can you identify? 
+# To find out the sites with similar species composition. 
 library(permute)
 library(lattice)
 library(vegan)
-spe.t<-t(spe) 
-spe.t.chi<-decostand(spe.t,"chi.square") 
-spe.t.D<-dist(spe.t.chi)
-library(gclus)
-source("coldiss.R")
-coldiss(spe.t.D,byrank=FALSE,diag=FALSE)
-spe.t.S<-vegdist(spe.t, "jaccard", binary=TRUE)
-coldiss(spe.t.S, diag=FALSE)
+NMDS<-metaMDS(spe, k=2, trymax = 100, trace=F,
+              autotransform = FALSE, distance = "bray")
+ordiplot(NMDS,type = "n")
+orditorp(NMDS, display = "species", col="red",air=0.01)
+orditorp(NMDS, display = "sites", cex=1.1, air=0.01)
 
-# Which groups of species are related to these groups of sites?
-env.pearson<-cor(env)
-round(env.pearson,2)
-env.o<-order.single(env.pearson)
-source("panelutils.R")
-op<-par(mfrow=c(1,1),pty="s")
-pairs(env[,env.o],lower.panel=panel.smooth,upper.panel=panel.cor,
-      diag.panel=panel.hist,main="Pearson相关矩阵")
-par(op)
+# To find out the environmental factor which contribute to the composition difference.
+env<- doubs$env[-8,]
+ef <- envfit(NMDS, env, permute=999)
+ef
+plot(NMDS, type = "t", display = "sites")
+plot(ef, p.max=0.05)
 
 # Which environmental variables cause a community to vary across a landscape?
-env<- doubs$env[-8,]
 decorana(spe)
 pca<-rda(spe)
 pca
