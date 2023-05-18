@@ -1,0 +1,52 @@
+---
+title: "homework_04"
+author: "heyi"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+1. Utilizing openstreesmap plugin in QGIS to find and download the map of the Doubs river (map: https://www.openstreetmap.org/relation/156145#map=9/47.1085/6.1057&layers=H), and download the map as a geojson format, which is becoming popular for encoding a variety of geographic data structures. 
+
+(1)在QGIS界面中，打开“Plugins”,点击”Manage and install Plugins”，在已安装的在所有插件栏中搜索“osmdownloader”并安装，再进入已安装插件栏中，勾选osmdownloader。——>但是Openstreetmap地图打不开。
+(2)转而下载quickOSM插件，步骤与上面相同，打开后，搜索Doubs river，随后保存为geojson格式.
+！[搜索结果图片](https://github.com/holly-heyi/classwork/commit/d12aa68cddf3c7a0c7cdc6af34058e4ae39a373e)
+
+2. You’d better to check the structure of the regions object by plotting the simple feature collection and dissolve the internal boundaries of the region if the geojson file contains. After that, please set the area that the river undergoes as the area of interest (AOI). 
+
+该图片无内部边界，无须消除，将河流所经过的区域设置为感兴趣的区域（AOI）。
+！[搜索结果图片](https://github.com/holly-heyi/classwork/commit/38ddb7137502b86e860fda3f21dadb2d1c63eb0e)
+
+3. Create an account of one of these geospatial official websites, such as USGS, EARTHDATA, Copernicus data space, and login in for check the images that the river covers. Filtering the records to keep only Landsat images with LandCloudCover lower than 10%, and try to find what products levels. Please note whether the records contain sr_ndvi. The normalized difference vegetation index, NDVI, provides a rough estimate of the abundance of healthy vegetation and provides a means of monitoring changes in vegetation over time. You can download through manual methods directly from the geospatial websites or by other means, including QGIS and R package.
+
+登陆USGA并注册，随后将AOI区域设为KML文件，用该KML文件去选择要下载的NDVI范围.
+！[搜索结果图片](https://github.com/holly-heyi/classwork/commit/38ddb7137502b86e860fda3f21dadb2d1c63eb0e)
+
+4. Load the NDVI raster file and check whether its crs is identical to AOI. If not, transform the crs of AOI vector into the another which is the same as that of NDVI. After that, you can crop and mask the NDVI for a small area, which just covers the AOI. Plot the cropped NDVI. 
+
+将tif栅格文件加载到图层中并进行合并.合并后转化为doubs矢量河流对应的crs：EPSG：4326-WGS,用Doubs河矢量去裁剪NDVI合并后的栅格.
+
+！[搜索结果图片](https://github.com/holly-heyi/classwork/commit/38ddb7137502b86e860fda3f21dadb2d1c63eb0e)
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
